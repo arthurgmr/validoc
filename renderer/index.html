@@ -1,0 +1,269 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="Content-Security-Policy"
+    content="default-src 'self'; style-src 'self' 'unsafe-inline'; script-src 'self'">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ValiDoc</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <div class="app">
+
+    <!-- ══════════════════════ HEADER ══════════════════════ -->
+    <header class="header">
+      <div class="header-brand">
+        <div class="brand-logo">📄</div>
+        <div>
+          <h1 class="brand-title">ValiDoc</h1>
+          <p class="brand-subtitle">Gestão de Documentos</p>
+        </div>
+      </div>
+      <nav class="header-nav">
+        <button class="btn btn--nav btn--nav-active" id="nav-documentos">Documentos</button>
+        <button class="btn btn--nav" id="nav-empresas">Empresas</button>
+      </nav>
+      <button class="btn btn--primary" id="btn-add">
+        + Novo Documento
+      </button>
+    </header>
+
+    <!-- ══════════════════════ MAIN ══════════════════════ -->
+    <main class="main">
+
+      <!-- ══════ SCREEN: DOCUMENTOS ══════ -->
+      <div id="screen-documentos">
+
+      <!-- Stats -->
+      <div class="stats-bar">
+        <div class="stat-card">
+          <span class="stat-value" id="stat-total">0</span>
+          <span class="stat-label">Total de documentos</span>
+        </div>
+        <div class="stat-card stat-card--warning">
+          <span class="stat-value" id="stat-expiring">0</span>
+          <span class="stat-label">Vencendo em 30 dias</span>
+        </div>
+        <div class="stat-card stat-card--danger">
+          <span class="stat-value" id="stat-expired">0</span>
+          <span class="stat-label">Vencidos</span>
+        </div>
+      </div>
+
+      <!-- Search -->
+      <div class="search-wrapper">
+        <span class="search-icon">🔍</span>
+        <input
+          type="search"
+          id="search-input"
+          class="search-input"
+          placeholder="Buscar por nome, empresa ou CNPJ..."
+          autocomplete="off"
+          spellcheck="false"
+        >
+      </div>
+
+      <!-- Table card -->
+      <div class="table-card">
+        <div class="table-scroll">
+          <table class="table">
+            <thead>
+              <tr>
+                <th>Nome do Documento</th>
+                <th>Empresa</th>
+                <th>Tipo</th>
+                <th>Validade</th>
+                <th>Status</th>
+                <th>Ações</th>
+              </tr>
+            </thead>
+            <tbody id="table-body"></tbody>
+          </table>
+        </div>
+
+        <!-- Empty state -->
+        <div class="empty-state" id="empty-state">
+          <div class="empty-state-icon">🗂️</div>
+          <p class="empty-state-title">Nenhum documento cadastrado</p>
+          <p class="empty-state-subtitle">Clique no botão abaixo para adicionar seu primeiro documento.</p>
+          <button class="btn btn--primary" id="btn-add-empty" style="margin-top: 8px;">
+            + Novo Documento
+          </button>
+        </div>
+      </div>
+
+      </div><!-- /#screen-documentos -->
+
+      <!-- ══════ SCREEN: EMPRESAS ══════ -->
+      <div id="screen-empresas" style="display: none;">
+
+        <div class="search-wrapper">
+          <span class="search-icon">🔍</span>
+          <input
+            type="search"
+            id="search-empresas-input"
+            class="search-input"
+            placeholder="Buscar por nome ou CNPJ..."
+            autocomplete="off"
+            spellcheck="false"
+          >
+        </div>
+
+        <div class="table-card">
+          <div class="table-scroll">
+            <table class="table">
+              <thead>
+                <tr>
+                  <th>Nome da Empresa</th>
+                  <th>CNPJ</th>
+                  <th>Telefone</th>
+                  <th>E-mail</th>
+                  <th>Ações</th>
+                </tr>
+              </thead>
+              <tbody id="empresas-table-body"></tbody>
+            </table>
+          </div>
+          <div class="empty-state" id="empty-state-empresas">
+            <div class="empty-state-icon">🏢</div>
+            <p class="empty-state-title">Nenhuma empresa cadastrada</p>
+            <p class="empty-state-subtitle">Clique no botão abaixo para adicionar sua primeira empresa.</p>
+            <button class="btn btn--primary" id="btn-add-empresa" style="margin-top: 8px;">
+              + Nova Empresa
+            </button>
+          </div>
+        </div>
+
+      </div><!-- /#screen-empresas -->
+
+    </main>
+  </div>
+
+  <!-- ══════════════════════ MODAL: ADD ══════════════════════ -->
+  <div class="modal-backdrop" id="add-backdrop" role="dialog" aria-modal="true" aria-labelledby="modal-add-title">
+    <div class="modal">
+      <div class="modal-header">
+        <h2 class="modal-title" id="modal-add-title">Novo Documento</h2>
+        <button class="modal-close" id="modal-close" aria-label="Fechar">&times;</button>
+      </div>
+      <form id="add-form">
+        <div class="modal-body">
+          <div class="form-group">
+            <label for="field-nome">Nome do documento *</label>
+            <input
+              type="text" id="field-nome" name="nome" class="form-control"
+              required placeholder="Ex: Contrato Social ABC Ltda" maxlength="200"
+            >
+          </div>
+          <div class="form-group">
+            <label for="field-empresa-id">Empresa *</label>
+            <select id="field-empresa-id" name="empresa_id" class="form-control" required>
+              <option value="" disabled selected>Selecione uma empresa...</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label for="field-tipo">Tipo de Certidão *</label>
+            <select id="field-tipo" name="tipo" class="form-control" required>
+              <option value="" disabled selected>Selecione um tipo...</option>
+              <option value="Certidão Negativa de Débitos Federais (CND)">Certidão Negativa de Débitos Federais (CND)</option>
+              <option value="Certidão Positiva com Efeitos de Negativa (CPEN)">Certidão Positiva com Efeitos de Negativa (CPEN)</option>
+              <option value="Certidão Negativa de Débitos Trabalhistas (CNDT)">Certidão Negativa de Débitos Trabalhistas (CNDT)</option>
+              <option value="Certidão de Regularidade do FGTS (CRF)">Certidão de Regularidade do FGTS (CRF)</option>
+              <option value="Certidão Negativa de Débitos Estaduais">Certidão Negativa de Débitos Estaduais</option>
+              <option value="Certidão Negativa de Débitos Municipais">Certidão Negativa de Débitos Municipais</option>
+              <option value="Certidão Simplificada da Junta Comercial">Certidão Simplificada da Junta Comercial</option>
+              <option value="Certidão Específica da Junta Comercial">Certidão Específica da Junta Comercial</option>
+              <option value="Outra Certidão">Outra Certidão</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label for="field-validade">Data de Validade *</label>
+            <input type="date" id="field-validade" name="data_validade" class="form-control" required>
+          </div>
+          <div class="form-group">
+            <label>Arquivo do documento *</label>
+            <div class="file-picker">
+              <input
+                type="text" id="file-path-display" class="form-control"
+                readonly placeholder="Nenhum arquivo selecionado" tabindex="-1"
+              >
+              <button type="button" class="btn btn--secondary" id="btn-pick-file">Selecionar</button>
+            </div>
+            <p id="file-hint" class="form-hint" style="display: none;">
+              Selecione um arquivo apenas se quiser substituir o atual. Deixe em branco para mantê-lo.
+            </p>
+          </div>
+          <div class="form-error" id="form-error" role="alert"></div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn--secondary" id="btn-cancel">Cancelar</button>
+          <button type="submit" class="btn btn--primary" id="btn-submit">Salvar documento</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- ══════════════════════ MODAL: ADD EMPRESA ══════════════════════ -->
+  <div class="modal-backdrop" id="add-empresa-backdrop" role="dialog" aria-modal="true" aria-labelledby="modal-empresa-title">
+    <div class="modal">
+      <div class="modal-header">
+        <h2 class="modal-title" id="modal-empresa-title">Nova Empresa</h2>
+        <button class="modal-close" id="empresa-modal-close" aria-label="Fechar">&times;</button>
+      </div>
+      <form id="add-empresa-form">
+        <div class="modal-body">
+          <div class="form-group">
+            <label for="field-empresa-nome">Nome da Empresa *</label>
+            <input type="text" id="field-empresa-nome" name="nome" class="form-control"
+              required placeholder="Ex: Empresa ABC Ltda" maxlength="200">
+          </div>
+          <div class="form-group">
+            <label for="field-empresa-cnpj">CNPJ *</label>
+            <input type="text" id="field-empresa-cnpj" name="cnpj" class="form-control"
+              required placeholder="00.000.000/0000-00" maxlength="18">
+          </div>
+          <div class="form-group">
+            <label for="field-empresa-telefone">Telefone *</label>
+            <input type="text" id="field-empresa-telefone" name="telefone" class="form-control"
+              required placeholder="(00) 00000-0000" maxlength="15">
+          </div>
+          <div class="form-group">
+            <label for="field-empresa-email">E-mail *</label>
+            <input type="email" id="field-empresa-email" name="email" class="form-control"
+              required placeholder="contato@empresa.com.br" maxlength="200">
+          </div>
+          <div class="form-error" id="empresa-form-error" role="alert"></div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn--secondary" id="btn-empresa-cancel">Cancelar</button>
+          <button type="submit" class="btn btn--primary" id="btn-empresa-submit">Salvar empresa</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- ══════════════════════ MODAL: DELETE ══════════════════════ -->
+  <div class="modal-backdrop" id="delete-backdrop" role="dialog" aria-modal="true" aria-labelledby="modal-delete-title">
+    <div class="modal modal--sm">
+      <div class="modal-header">
+        <h2 class="modal-title" id="modal-delete-title">Confirmar Exclusão</h2>
+      </div>
+      <div class="modal-body">
+        <p>Tem certeza que deseja excluir <span id="delete-item-type">o documento</span> <strong id="delete-doc-name"></strong>?</p>
+        <p id="delete-body-subtitle">O arquivo físico também será removido permanentemente.</p>
+        <p id="delete-error" class="form-error" style="display:none"></p>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn--secondary" id="btn-delete-cancel">Cancelar</button>
+        <button class="btn btn--danger" id="btn-delete-confirm">Excluir</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══════════════════════ TOASTS ══════════════════════ -->
+  <div class="toast-container" id="toast-container" aria-live="polite"></div>
+
+  <script type="module" src="renderer.js"></script>
+</body>
+</html>
