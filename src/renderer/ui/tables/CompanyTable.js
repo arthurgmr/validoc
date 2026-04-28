@@ -1,5 +1,6 @@
 import { escapeHtml } from '../../utils/format.js';
 import { appState }   from '../../state/AppState.js';
+import { Icons }      from '../../utils/icons.js';
 
 class CompanyTable {
   #tbody;
@@ -63,9 +64,9 @@ class CompanyTable {
         <td>
           <div class="action-group">
             <button class="btn btn--ghost btn--icon" data-action="edit-empresa"
-              data-id="${c.id}" title="Editar empresa">✏️</button>
+              data-id="${c.id}" title="Editar empresa">${Icons.pencil}</button>
             <button class="btn btn--ghost-danger btn--icon" data-action="delete-empresa"
-              data-id="${c.id}" data-nome="${escapeHtml(c.nome)}" title="Remover empresa">🗑</button>
+              data-id="${c.id}" data-nome="${escapeHtml(c.nome)}" title="Remover empresa">${Icons.trash}</button>
           </div>
         </td>
       </tr>

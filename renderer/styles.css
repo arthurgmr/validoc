@@ -437,9 +437,15 @@ input, select { font-family: inherit; }
 .btn--ghost-danger:not(:disabled):hover { background: var(--danger-light); }
 
 .btn--icon {
-  padding: 5px 9px;
-  font-size: 15px;
-  line-height: 1;
+  padding: 6px;
+  line-height: 0;
+  border-radius: var(--radius);
+}
+
+.btn--icon svg {
+  display: block;
+  pointer-events: none;
+  flex-shrink: 0;
 }
 
 /* ═══════════════════════════════════════════════════════════

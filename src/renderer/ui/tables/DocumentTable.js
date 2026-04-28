@@ -1,6 +1,7 @@
 import { getStatus }           from '../../utils/status.js';
 import { escapeHtml, formatDate } from '../../utils/format.js';
 import { appState }            from '../../state/AppState.js';
+import { Icons }               from '../../utils/icons.js';
 
 class DocumentTable {
   #tbody;
@@ -76,10 +77,10 @@ class DocumentTable {
           <td><span class="status-badge status-badge--${status.type}">${status.label}</span></td>
           <td>
             <div class="action-group">
-              <button class="btn btn--ghost btn--icon" data-action="open"   data-id="${doc.id}" title="Abrir o arquivo no programa padrão">↗</button>
-              <button class="btn btn--ghost btn--icon" data-action="save"   data-id="${doc.id}" title="Salvar uma cópia em outro local">⬇</button>
-              <button class="btn btn--ghost btn--icon" data-action="edit"   data-id="${doc.id}" title="Editar documento">✏️</button>
-              <button class="btn btn--ghost-danger btn--icon" data-action="delete" data-id="${doc.id}" data-nome="${escapeHtml(doc.nome)}" title="Remover documento e arquivo">🗑</button>
+              <button class="btn btn--ghost btn--icon" data-action="open"   data-id="${doc.id}" title="Abrir o arquivo no programa padrão">${Icons.eye}</button>
+              <button class="btn btn--ghost btn--icon" data-action="save"   data-id="${doc.id}" title="Salvar uma cópia em outro local">${Icons.download}</button>
+              <button class="btn btn--ghost btn--icon" data-action="edit"   data-id="${doc.id}" title="Editar documento">${Icons.pencil}</button>
+              <button class="btn btn--ghost-danger btn--icon" data-action="delete" data-id="${doc.id}" data-nome="${escapeHtml(doc.nome)}" title="Remover documento e arquivo">${Icons.trash}</button>
             </div>
           </td>
         </tr>
