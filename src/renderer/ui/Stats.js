@@ -20,6 +20,7 @@ class Stats {
     let expiring = 0, expired = 0;
     docs.forEach((doc) => {
       const s = getStatus(doc.data_validade);
+      // Prazo indeterminado não entra nos cards de alerta
       if (s.type === 'expired')                                        expired++;
       else if (s.type === 'expiring' || s.type === 'expiring-today') expiring++;
     });

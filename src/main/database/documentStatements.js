@@ -15,7 +15,7 @@ module.exports = {
            e.nome AS empresa_nome
     FROM documentos d
     LEFT JOIN empresas e ON d.empresa_id = e.id
-    ORDER BY d.data_validade ASC
+    ORDER BY (d.data_validade IS NOT NULL) ASC, d.data_validade ASC
   `),
 
   getById: db.prepare('SELECT * FROM documentos WHERE id = ?'),

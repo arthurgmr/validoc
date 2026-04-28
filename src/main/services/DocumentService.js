@@ -13,12 +13,14 @@ function add({ nome, empresa_id, tipo, data_validade, sourcePath }) {
   if (!empresa_id || !compStmt.getById.get(Number(empresa_id))) {
     throw new NotFoundError('Empresa não encontrada.');
   }
+  // String vazia — tratar como prazo indeterminado
+  const validade = data_validade || null;
   const storedFilename = FileService.copyToStorage(sourcePath);
   const result = stmt.insert.run({
     nome,
     empresa_id: Number(empresa_id),
     tipo,
-    data_validade,
+    data_validade: validade,
     caminho_arquivo: storedFilename,
   });
   return { id: result.lastInsertRowid };
@@ -63,6 +65,9 @@ function update(id, { nome, empresa_id, tipo, data_validade, sourcePath }) {
     throw new NotFoundError('Empresa não encontrada.');
   }
 
+  // String vazia — tratar como prazo indeterminado
+  const validade = data_validade || null;
+
   if (sourcePath) {
     const novoNomeArquivo = FileService.copyToStorage(sourcePath);
     FileService.deleteFromStorage(doc.caminho_arquivo);
@@ -71,11 +76,11 @@ function update(id, { nome, empresa_id, tipo, data_validade, sourcePath }) {
       nome,
       empresa_id: Number(empresa_id),
       tipo,
-      data_validade,
+      data_validade: validade,
       caminho_arquivo: novoNomeArquivo,
     });
   } else {
-    stmt.update.run({ id, nome, empresa_id: Number(empresa_id), tipo, data_validade });
+    stmt.update.run({ id, nome, empresa_id: Number(empresa_id), tipo, data_validade: validade });
   }
 
   return { success: true };

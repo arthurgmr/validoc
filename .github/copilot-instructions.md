@@ -59,6 +59,7 @@ src/renderer/
     format.js            # formatDate, escapeHtml
     masks.js             # Máscaras de input (CNPJ, telefone)
     status.js            # getStatus(data_validade) → { type, label }
+                         # tipos: 'valid' | 'expiring' | 'expiring-today' | 'expired' | 'indeterminate'
     icons.js             # Ícones Phosphor inline como constantes Icons.*
 ```
 
@@ -94,6 +95,8 @@ tipo_documento (id, nome UNIQUE, data_criacao)
 
 `documentos.tipo` é TEXT livre (compatibilidade com bases antigas). `tipos_documento` é a lista gerenciada pelo usuário — sem FK, para não quebrar registros legados.
 
+`documentos.data_validade` é TEXT **nullable**. Valor `NULL` indica **prazo indeterminado** — esses documentos não entram em cálculos de vencimento nem em notificações. A migração idempotente em `schema.js` garante compatibilidade com bases criadas antes dessa feature sem perda de dados.
+
 Arquivos físicos ficam em `app.getPath('userData')/arquivos/` gerenciados por `FileService.js`.  
 `schema.js` usa `CREATE TABLE IF NOT EXISTS` + blocos `try/catch` para migrations idempotentes.
 
@@ -115,6 +118,7 @@ Todos os ícones são SVG inline via constantes em `src/renderer/utils/icons.js`
 - Botões de ação do header usam `.btn--menu` (padding: 9px 12px, line-height: 0) com ícone 20×20 injetado via `innerHTML = Icons.*`
 - Dropdowns: `.menu-wrapper` (position: relative) + `.dropdown-menu` (absolute, hidden attr) + `.dropdown-item`
 - Tabelas usam classes modificadoras para alinhamento: `.table--docs` (cols 3+ centralizadas), `.table--empresas` (cols 2+ centralizadas)
+- Checkbox em formulário usa `.checkbox-label` (label wrapping input[type=checkbox]) para layout e estilo consistentes
 
 ## Design Tokens (CSS)
 

@@ -279,6 +279,7 @@ input, select { font-family: inherit; }
 .table tbody tr.row--expiring-today td:first-child { box-shadow: inset 3px 0 0 #f97316;        }
 .table tbody tr.row--expiring       td:first-child { box-shadow: inset 3px 0 0 var(--warning); }
 .table tbody tr.row--valid          td:first-child { box-shadow: inset 3px 0 0 var(--success); }
+.table tbody tr.row--indeterminate  td:first-child { box-shadow: inset 3px 0 0 var(--border);  }
 
 /* Column: nome */
 .col-nome span {
@@ -360,6 +361,11 @@ input, select { font-family: inherit; }
   background: var(--danger-light);
   color: #991b1b;
   border: 1px solid var(--danger-border);
+}
+.status-badge--indeterminate {
+  background: var(--surface-2);
+  color: var(--text-secondary);
+  border: 1px solid var(--border);
 }
 
 /* Actions */
@@ -568,6 +574,24 @@ input, select { font-family: inherit; }
   font-size: 13px;
   font-weight: 500;
   color: var(--text-secondary);
+}
+
+.checkbox-label {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--text-secondary);
+  cursor: pointer;
+  user-select: none;
+}
+
+.checkbox-label input[type="checkbox"] {
+  width: 15px;
+  height: 15px;
+  accent-color: var(--primary);
+  cursor: pointer;
 }
 
 .form-control {

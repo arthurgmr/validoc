@@ -1,4 +1,6 @@
 export function getStatus(dataValidade) {
+  if (!dataValidade) return { type: 'indeterminate', label: 'Prazo indeterminado' };
+
   const today = new Date();
   today.setHours(0, 0, 0, 0);
   const validade = new Date(dataValidade + 'T00:00:00');

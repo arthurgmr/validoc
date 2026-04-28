@@ -12,6 +12,9 @@ class DocumentModal extends BaseModal {
   #tipoSelect;
   #nomeGroup;
   #modalTitle;
+  #prazoIndeterminado;
+  #validadeGroup;
+  #validadeInput;
   #selectedFile = null;
   #editingId    = null;
   #onSuccess;
@@ -25,6 +28,9 @@ class DocumentModal extends BaseModal {
     this.#tipoSelect      = document.getElementById('field-tipo');
     this.#nomeGroup       = document.getElementById('field-nome-group');
     this.#modalTitle      = document.getElementById('modal-add-title');
+    this.#prazoIndeterminado = document.getElementById('field-prazo-indeterminado');
+    this.#validadeGroup   = document.getElementById('field-validade-group');
+    this.#validadeInput   = document.getElementById('field-validade');
     this.#onSuccess       = onSuccess;
     this._initCloseTriggers('btn-cancel');
     this.#initEvents();
@@ -44,7 +50,9 @@ class DocumentModal extends BaseModal {
 
     document.getElementById('file-hint').style.display = 'none';
     this.#nomeGroup.style.display = 'none';
-
+    // Resetar prazo indeterminado
+    this.#prazoIndeterminado.checked = false;
+    this.#setIndeterminate(false);
     await Promise.all([this.#populateEmpresas(), this.#populateTipos()]);
     setTimeout(() => this.#tipoSelect.focus(), 60);
   }
@@ -63,6 +71,9 @@ class DocumentModal extends BaseModal {
 
     this.hideError();
     this.#form.reset();
+    // Garantir estado limpo do campo de data ao abrir edição
+    this.#prazoIndeterminado.checked = false;
+    this.#setIndeterminate(false);
     document.getElementById('add-backdrop').classList.add('open');
 
     try {
@@ -77,8 +88,16 @@ class DocumentModal extends BaseModal {
       ]);
 
       document.getElementById('field-nome').value = doc.nome;
-      document.getElementById('field-validade').value = doc.data_validade;
-      this.#empresaSelect.value                       = String(doc.empresa_id);
+      // Editar prazo: suporte bidirecional (data <→ indeterminado)
+      if (doc.data_validade) {
+        this.#prazoIndeterminado.checked = false;
+        this.#setIndeterminate(false);
+        this.#validadeInput.value = doc.data_validade;
+      } else {
+        this.#prazoIndeterminado.checked = true;
+        this.#setIndeterminate(true);
+      }
+      this.#empresaSelect.value = String(doc.empresa_id);
 
       this.#filePathDisplay.value = doc.caminho_arquivo.replace(/^\d+_/, '');
       this.#filePathDisplay.dataset.currentFile = doc.caminho_arquivo;
@@ -86,6 +105,20 @@ class DocumentModal extends BaseModal {
       setTimeout(() => this.#tipoSelect.focus(), 60);
     } catch (err) {
       this.showError('Erro ao carregar dados do documento: ' + (err.message || 'tente novamente.'));
+    }
+  }
+
+  // ─── Habilita/desabilita campo de data conforme checkbox ─────────────────
+  #setIndeterminate(isIndeterminate) {
+    if (isIndeterminate) {
+      this.#validadeInput.value    = '';
+      this.#validadeInput.disabled = true;
+      this.#validadeInput.removeAttribute('required');
+      this.#validadeGroup.querySelector('label').textContent = 'Data de Validade';
+    } else {
+      this.#validadeInput.disabled = false;
+      this.#validadeInput.setAttribute('required', '');
+      this.#validadeGroup.querySelector('label').textContent = 'Data de Validade *';
     }
   }
 
@@ -130,7 +163,9 @@ class DocumentModal extends BaseModal {
   }
 
   // ─── Eventos de botões e submit ──────────────────────────────────────────
-  #initEvents() {
+  #initEvents() {    this.#prazoIndeterminado.addEventListener('change', () => {
+      this.#setIndeterminate(this.#prazoIndeterminado.checked);
+    });
     document.getElementById('btn-pick-file').addEventListener('click', async () => {
       try {
         const filePath = await CompanyApiService.openFileDialog();
@@ -159,6 +194,14 @@ class DocumentModal extends BaseModal {
       const tipo = data.get('tipo');
       if (!tipo) { this.showError('Selecione um tipo de documento.'); return; }
 
+      const indeterminado = this.#prazoIndeterminado.checked;
+      const data_validade = indeterminado ? null : (data.get('data_validade') || null);
+
+      if (!indeterminado && !data_validade) {
+        this.showError('Informe a data de validade ou marque "Prazo indeterminado".');
+        return;
+      }
+
       // nome é derivado do tipo (não exibido ao usuário)
       const nome = tipo;
 
@@ -171,7 +214,7 @@ class DocumentModal extends BaseModal {
             nome,
             empresa_id,
             tipo,
-            data_validade: data.get('data_validade'),
+            data_validade,
             sourcePath:    this.#selectedFile ?? null,
           });
           toast.show('Documento atualizado com sucesso!', 'success');
@@ -180,7 +223,7 @@ class DocumentModal extends BaseModal {
             nome,
             empresa_id,
             tipo,
-            data_validade: data.get('data_validade'),
+            data_validade,
             sourcePath:    this.#selectedFile,
           });
           toast.show('Documento cadastrado com sucesso!', 'success');
