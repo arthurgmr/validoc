@@ -16,10 +16,10 @@ jobs:
           node-version: 22
 
       - name: Install dependencies
-        run: npm ci
+        run: npm ci --ignore-scripts
 
       - name: Rebuild native modules for Electron (Windows)
-        run: npx electron-rebuild -f -w better-sqlite3
+        run: npx @electron/rebuild -f -w better-sqlite3
 
       - name: Build & publish (Windows)
         run: npx electron-builder --win --publish always
@@ -36,10 +36,10 @@ jobs:
           node-version: 22
 
       - name: Install dependencies
-        run: npm ci
+        run: npm ci --ignore-scripts
 
       - name: Rebuild native modules for Electron (macOS)
-        run: npx electron-rebuild -f -w better-sqlite3
+        run: npx @electron/rebuild -f -w better-sqlite3
 
       - name: Build & publish (macOS)
         run: npx electron-builder --mac --publish always
