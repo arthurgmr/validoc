@@ -35,4 +35,17 @@ try {
   // Coluna já existe — ignorar
 }
 
+// Migration idempotente: tabela de tipos de documento gerenciáveis
+try {
+  db.exec(`
+    CREATE TABLE IF NOT EXISTS tipos_documento (
+      id           INTEGER PRIMARY KEY AUTOINCREMENT,
+      nome         TEXT    NOT NULL UNIQUE,
+      data_criacao TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+    );
+  `);
+} catch {
+  // Tabela já existe — ignorar
+}
+
 module.exports = {};

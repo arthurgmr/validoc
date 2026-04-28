@@ -297,6 +297,26 @@ input, select { font-family: inherit; }
   letter-spacing: 0.3px;
 }
 
+/* Centering for doc table columns 3+ (Validade, Status, Ações) */
+.table--docs thead th:nth-child(n+3),
+.table--docs tbody td:nth-child(n+3) {
+  text-align: center;
+}
+
+.table--docs tbody td:nth-child(n+3) .action-group {
+  justify-content: center;
+}
+
+/* Centering for empresas table columns 2+ (CNPJ, Telefone, E-mail, Ações) */
+.table--empresas thead th:nth-child(n+2),
+.table--empresas tbody td:nth-child(n+2) {
+  text-align: center;
+}
+
+.table--empresas tbody td:nth-child(n+2) .action-group {
+  justify-content: center;
+}
+
 /* Type badge */
 .type-badge {
   display: inline-flex;
@@ -440,6 +460,11 @@ input, select { font-family: inherit; }
   padding: 6px;
   line-height: 0;
   border-radius: var(--radius);
+}
+
+.btn--menu {
+  padding: 9px 12px;
+  line-height: 0;
 }
 
 .btn--icon svg {
@@ -714,3 +739,130 @@ select.form-control { cursor: pointer; }
   color: var(--text-muted);
   line-height: 1.4;
 }
+
+/* ═══════════════════════════════════════════════════════════
+   MENU SANDUÍCHE (HEADER — DOCUMENTOS)
+════════════════════════════════════════════════════════════ */
+.menu-wrapper {
+  position: relative;
+  display: inline-block;
+}
+
+.dropdown-menu {
+  position: absolute;
+  top: calc(100% + 6px);
+  right: 0;
+  min-width: 200px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow-lg);
+  z-index: 200;
+  overflow: hidden;
+  animation: dropdownIn 120ms ease;
+}
+
+@keyframes dropdownIn {
+  from { opacity: 0; transform: translateY(-6px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+.dropdown-item {
+  display: block;
+  width: 100%;
+  padding: 10px 16px;
+  background: none;
+  border: none;
+  text-align: left;
+  font-size: 14px;
+  color: var(--text);
+  cursor: pointer;
+  transition: background var(--transition);
+}
+
+.dropdown-item:hover {
+  background: var(--surface-2);
+}
+
+.dropdown-item + .dropdown-item {
+  border-top: 1px solid var(--border);
+}
+
+/* ═══════════════════════════════════════════════════════════
+   MODAL DE TIPOS DE DOCUMENTO
+════════════════════════════════════════════════════════════ */
+.tipos-add-row {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 12px;
+}
+
+.tipos-add-row .form-control {
+  flex: 1;
+}
+
+.btn--success {
+  background: var(--success);
+  color: #fff;
+  border: none;
+  border-radius: var(--radius);
+  padding: 8px 16px;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: filter var(--transition);
+  white-space: nowrap;
+}
+
+.btn--success:hover  { filter: brightness(0.9); }
+.btn--success:active { filter: brightness(0.8); }
+
+.btn--sm {
+  padding: 5px 12px;
+  font-size: 13px;
+}
+
+.tipos-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  max-height: 340px;
+  overflow-y: auto;
+}
+
+.tipos-list-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  padding: 10px 4px;
+  border-bottom: 1px solid var(--border);
+}
+
+.tipos-list-item:last-child {
+  border-bottom: none;
+}
+
+.tipos-item-nome {
+  flex: 1;
+  font-size: 14px;
+  color: var(--text);
+}
+
+.tipos-item-nome--warning {
+  color: var(--danger);
+  font-size: 13px;
+}
+
+.tipos-list-loading,
+.tipos-list-empty {
+  padding: 16px 4px;
+  font-size: 14px;
+  color: var(--text-muted);
+  text-align: center;
+}
+
+.tipos-edit-input {
+  flex: 1;
+}
+

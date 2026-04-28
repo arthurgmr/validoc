@@ -19,4 +19,9 @@ contextBridge.exposeInMainWorld('api', {
   checkForUpdates: ()   => ipcRenderer.invoke('updater:check'),
   installUpdate:   ()   => ipcRenderer.invoke('updater:install'),
   onUpdateStatus:  (cb) => ipcRenderer.on('update:status', (_e, data) => cb(data)),
+
+  getTipos:    ()           => ipcRenderer.invoke('tipos:getAll'),
+  addTipo:     (data)       => ipcRenderer.invoke('tipos:add', data),
+  updateTipo:  (id, data)   => ipcRenderer.invoke('tipos:update', id, data),
+  deleteTipo:  (id)         => ipcRenderer.invoke('tipos:delete', id),
 });

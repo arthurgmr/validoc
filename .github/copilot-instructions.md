@@ -18,13 +18,16 @@ src/main/
     schema.js            # CREATE TABLE + migrations idempotentes
     documentStatements.js
     companyStatements.js
+    tipoDocumentoStatements.js
   ipc/
-    documentHandlers.js  # ipcMain.handle('documents:*')
-    companyHandlers.js   # ipcMain.handle('companies:*')
-    dialogHandlers.js    # ipcMain.handle('dialog:*')
+    documentHandlers.js        # ipcMain.handle('documents:*')
+    companyHandlers.js         # ipcMain.handle('companies:*')
+    dialogHandlers.js          # ipcMain.handle('dialog:*')
+    tipoDocumentoHandlers.js   # ipcMain.handle('tipos:*')
   services/
-    DocumentService.js   # Lógica de negócio de documentos
-    CompanyService.js    # Lógica de negócio de empresas
+    DocumentService.js
+    CompanyService.js
+    TipoDocumentoService.js
     FileService.js       # Cópia/deleção/abertura de arquivos em userData/arquivos/
     NotificationService.js
 
@@ -36,8 +39,9 @@ src/renderer/
   state/
     AppState.js          # Estado global simples com subscribe/set/get
   services/
-    DocumentApiService.js  # Chama window.api.*
+    DocumentApiService.js
     CompanyApiService.js
+    TipoDocumentoApiService.js
   ui/
     Navigation.js        # Troca de telas (documentos / empresas)
     Stats.js             # Cards de totais
@@ -47,6 +51,7 @@ src/renderer/
       DocumentModal.js   # Herda BaseModal
       CompanyModal.js    # Herda BaseModal
       DeleteModal.js     # Herda BaseModal
+      TipoDocumentoModal.js  # Herda BaseModal — CRUD inline de tipos
     tables/
       DocumentTable.js   # Renderiza tabela + filtragem via AppState
       CompanyTable.js
@@ -54,6 +59,7 @@ src/renderer/
     format.js            # formatDate, escapeHtml
     masks.js             # Máscaras de input (CNPJ, telefone)
     status.js            # getStatus(data_validade) → { type, label }
+    icons.js             # Ícones Phosphor inline como constantes Icons.*
 ```
 
 ## Fluxo IPC (padrão obrigatório)
@@ -78,15 +84,26 @@ Para adicionar uma nova operação:
 
 ## Banco de Dados
 
-SQLite via **better-sqlite3** (síncrono). Duas tabelas principais:
+SQLite via **better-sqlite3** (síncrono). Tabelas:
 
 ```sql
-empresas   (id, nome, cnpj, telefone, email, data_criacao)
+empresa    (id, nome, cnpj, telefone, email, data_criacao)
 documentos (id, nome, identificador, empresa_id, tipo, data_validade, caminho_arquivo, data_criacao)
+tipo_documento (id, nome UNIQUE, data_criacao)
 ```
+
+`documentos.tipo` é TEXT livre (compatibilidade com bases antigas). `tipos_documento` é a lista gerenciada pelo usuário — sem FK, para não quebrar registros legados.
 
 Arquivos físicos ficam em `app.getPath('userData')/arquivos/` gerenciados por `FileService.js`.  
 `schema.js` usa `CREATE TABLE IF NOT EXISTS` + blocos `try/catch` para migrations idempotentes.
+
+## Ícones
+
+Todos os ícones são SVG inline via constantes em `src/renderer/utils/icons.js`. Usar sempre `Icons.<nome>` — nunca SVG literal no HTML ou em outros arquivos JS.
+
+- Ícones 16×16: gerados pelo helper `_svg(path)` (viewBox 0 0 256 256)
+- Ícones 20×20 (botões de ação no header): definidos diretamente com `width/height="20"`
+- Exemplos disponíveis: `Icons.eye`, `Icons.download`, `Icons.pencil`, `Icons.trash`, `Icons.list`, `Icons.plus`
 
 ## Padrões de UI
 
@@ -95,6 +112,9 @@ Arquivos físicos ficam em `app.getPath('userData')/arquivos/` gerenciados por `
 - `BaseModal` gerencia open/close/error; subclasses sobrescrevem `_onOpen()` e `_onClose()`
 - Estado reativo via `AppState.subscribe('chave', callback)` — tabelas e stats ouvem o estado
 - Tabelas recebem callbacks (`onDelete`, `onEdit`, `onOpen`, `onSave`) instanciadas em `renderer.js`
+- Botões de ação do header usam `.btn--menu` (padding: 9px 12px, line-height: 0) com ícone 20×20 injetado via `innerHTML = Icons.*`
+- Dropdowns: `.menu-wrapper` (position: relative) + `.dropdown-menu` (absolute, hidden attr) + `.dropdown-item`
+- Tabelas usam classes modificadoras para alinhamento: `.table--docs` (cols 3+ centralizadas), `.table--empresas` (cols 2+ centralizadas)
 
 ## Design Tokens (CSS)
 
@@ -123,3 +143,6 @@ Classes utilitárias principais: `.btn`, `.btn--primary`, `.btn--secondary`, `.b
 - `escapeHtml()` obrigatório em **todo** conteúdo dinâmico inserido no DOM via `innerHTML`
 - Validação de paths em `FileService._safeDestPath()` — nunca bypass de path traversal
 - Novos campos de formulário sempre com `maxlength` e validação no Service (main), não só no HTML
+- `app.requestSingleInstanceLock()` obrigatório — impede segunda instância e duplo tray
+- `app.setAppUserModelId('com.validoc.desktop')` no Windows — obrigatório para notificações no Action Center
+- Ícone do tray: `icon.ico` no Windows, `icon.png` nos demais (arquivos em `assets/`)

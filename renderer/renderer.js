@@ -1,14 +1,16 @@
-import { appState }           from '../src/renderer/state/AppState.js';
-import { DocumentApiService } from '../src/renderer/services/DocumentApiService.js';
-import { CompanyApiService }  from '../src/renderer/services/CompanyApiService.js';
-import { toast }              from '../src/renderer/ui/Toast.js';
-import { navigation }         from '../src/renderer/ui/Navigation.js';
-import { stats }              from '../src/renderer/ui/Stats.js';
-import { DocumentModal }      from '../src/renderer/ui/modals/DocumentModal.js';
-import { CompanyModal }       from '../src/renderer/ui/modals/CompanyModal.js';
-import { DeleteModal }        from '../src/renderer/ui/modals/DeleteModal.js';
-import { DocumentTable }      from '../src/renderer/ui/tables/DocumentTable.js';
-import { CompanyTable }       from '../src/renderer/ui/tables/CompanyTable.js';
+import { appState }                from '../src/renderer/state/AppState.js';
+import { DocumentApiService }      from '../src/renderer/services/DocumentApiService.js';
+import { CompanyApiService }       from '../src/renderer/services/CompanyApiService.js';
+import { toast }                   from '../src/renderer/ui/Toast.js';
+import { navigation }              from '../src/renderer/ui/Navigation.js';
+import { stats }                   from '../src/renderer/ui/Stats.js';
+import { DocumentModal }           from '../src/renderer/ui/modals/DocumentModal.js';
+import { CompanyModal }            from '../src/renderer/ui/modals/CompanyModal.js';
+import { DeleteModal }             from '../src/renderer/ui/modals/DeleteModal.js';
+import { TipoDocumentoModal }      from '../src/renderer/ui/modals/TipoDocumentoModal.js';
+import { DocumentTable }           from '../src/renderer/ui/tables/DocumentTable.js';
+import { CompanyTable }            from '../src/renderer/ui/tables/CompanyTable.js';
+import { Icons }                   from '../src/renderer/utils/icons.js';
 
 async function loadDocuments() {
   try {
@@ -27,9 +29,10 @@ async function loadCompanies() {
 }
 
 // Modais
-const deleteModal   = new DeleteModal({ onDocDeleted: loadDocuments, onCompanyDeleted: loadCompanies });
-const documentModal = new DocumentModal(loadDocuments);
-const companyModal  = new CompanyModal(loadCompanies);
+const deleteModal         = new DeleteModal({ onDocDeleted: loadDocuments, onCompanyDeleted: loadCompanies });
+const documentModal       = new DocumentModal(loadDocuments);
+const companyModal        = new CompanyModal(loadCompanies);
+const tipoDocumentoModal  = new TipoDocumentoModal();
 
 // Tabelas
 const documentTable = new DocumentTable({
@@ -53,9 +56,37 @@ const companyTable = new CompanyTable({
 });
 
 // Navegação
-navigation.onAddClick('documentos', () => documentModal.open());
-navigation.onAddClick('empresas',   () => companyModal.open());
+navigation.onAddClick('empresas', () => companyModal.open());
 navigation.init();
+
+// Menu sanduiche — documentos
+const docsDropdown = document.getElementById('docs-dropdown');
+const btnDocsMenu  = document.getElementById('btn-docs-menu');
+btnDocsMenu.innerHTML = Icons.list;
+
+document.getElementById('btn-add').innerHTML = Icons.plus;
+
+btnDocsMenu.addEventListener('click', (e) => {
+  e.stopPropagation();
+  const isOpen = !docsDropdown.hidden;
+  docsDropdown.hidden = isOpen;
+});
+
+document.getElementById('dropdown-tipos').addEventListener('click', () => {
+  docsDropdown.hidden = true;
+  tipoDocumentoModal.open();
+});
+
+document.getElementById('dropdown-novo-doc').addEventListener('click', () => {
+  docsDropdown.hidden = true;
+  documentModal.open();
+});
+
+document.addEventListener('click', (e) => {
+  if (!e.target.closest('#docs-menu-wrapper')) {
+    docsDropdown.hidden = true;
+  }
+});
 
 // Botões de empty state
 document.getElementById('btn-add-empty').addEventListener('click',   () => documentModal.open());
@@ -67,6 +98,8 @@ document.addEventListener('keydown', (e) => {
     documentModal.close();
     companyModal.close();
     deleteModal.close();
+    tipoDocumentoModal.close();
+    docsDropdown.hidden = true;
   }
 });
 

@@ -1,11 +1,14 @@
 'use strict';
 
 const { Notification } = require('electron');
+const path             = require('path');
 const DocumentService  = require('./DocumentService');
+
+const ICON_PATH = path.join(__dirname, '../../../assets/icon.png');
 
 function send(title, body) {
   if (Notification.isSupported()) {
-    new Notification({ title, body }).show();
+    new Notification({ title, body, icon: ICON_PATH }).show();
   }
 }
 

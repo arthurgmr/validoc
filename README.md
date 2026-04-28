@@ -7,6 +7,7 @@ A desktop application for managing documents with expiration dates, linked to co
 ## Features
 
 - **Document tracking** — store documents with expiration dates and get notified before they expire
+- **Document types** — manage a reusable list of document types (certidões, alvarás, etc.)
 - **Company management** — link documents to companies with contact info (CNPJ, phone, email)
 - **File attachments** — attach any file to a document; open or save a copy at any time
 - **Status indicators** — see at a glance which documents are valid, expiring soon, or already expired

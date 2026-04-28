@@ -8,7 +8,8 @@ let tray;
 
 function createTray(getMainWindow) {
   try {
-    const iconPath = path.join(__dirname, '../../assets/tray-icon.png');
+    const iconFile = process.platform === 'win32' ? 'icon.ico' : 'icon.png';
+    const iconPath = path.join(__dirname, '../../assets', iconFile);
     const icon = fs.existsSync(iconPath)
       ? nativeImage.createFromPath(iconPath)
       : nativeImage.createEmpty();

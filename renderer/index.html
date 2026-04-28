@@ -24,9 +24,14 @@
         <button class="btn btn--nav btn--nav-active" id="nav-documentos">Documentos</button>
         <button class="btn btn--nav" id="nav-empresas">Empresas</button>
       </nav>
-      <button class="btn btn--primary" id="btn-add">
-        + Novo Documento
-      </button>
+      <div id="docs-menu-wrapper" class="menu-wrapper">
+        <button id="btn-docs-menu" class="btn btn--primary btn--menu" aria-label="Menu documentos"></button>
+        <div id="docs-dropdown" class="dropdown-menu" hidden>
+          <button class="dropdown-item" id="dropdown-tipos">Tipo de Documento</button>
+          <button class="dropdown-item" id="dropdown-novo-doc">Cadastrar Documento</button>
+        </div>
+      </div>
+      <button class="btn btn--primary btn--menu" id="btn-add" style="display:none" aria-label="Nova Empresa"></button>
     </header>
 
     <!-- ══════════════════════ MAIN ══════════════════════ -->
@@ -67,12 +72,11 @@
       <!-- Table card -->
       <div class="table-card">
         <div class="table-scroll">
-          <table class="table">
+          <table class="table table--docs">
             <thead>
               <tr>
                 <th>Nome do Documento</th>
                 <th>Empresa</th>
-                <th>Tipo</th>
                 <th>Validade</th>
                 <th>Status</th>
                 <th>Ações</th>
@@ -112,7 +116,7 @@
 
         <div class="table-card">
           <div class="table-scroll">
-            <table class="table">
+            <table class="table table--empresas">
               <thead>
                 <tr>
                   <th>Nome da Empresa</th>
@@ -149,11 +153,11 @@
       </div>
       <form id="add-form">
         <div class="modal-body">
-          <div class="form-group">
-            <label for="field-nome">Nome do documento *</label>
+          <div class="form-group" id="field-nome-group" style="display:none">
+            <label for="field-nome">Nome do documento</label>
             <input
               type="text" id="field-nome" name="nome" class="form-control"
-              required placeholder="Ex: Contrato Social ABC Ltda" maxlength="200"
+              placeholder="Ex: Contrato Social ABC Ltda" maxlength="200"
             >
           </div>
           <div class="form-group">
@@ -166,15 +170,6 @@
             <label for="field-tipo">Tipo de Certidão *</label>
             <select id="field-tipo" name="tipo" class="form-control" required>
               <option value="" disabled selected>Selecione um tipo...</option>
-              <option value="Certidão Negativa de Débitos Federais (CND)">Certidão Negativa de Débitos Federais (CND)</option>
-              <option value="Certidão Positiva com Efeitos de Negativa (CPEN)">Certidão Positiva com Efeitos de Negativa (CPEN)</option>
-              <option value="Certidão Negativa de Débitos Trabalhistas (CNDT)">Certidão Negativa de Débitos Trabalhistas (CNDT)</option>
-              <option value="Certidão de Regularidade do FGTS (CRF)">Certidão de Regularidade do FGTS (CRF)</option>
-              <option value="Certidão Negativa de Débitos Estaduais">Certidão Negativa de Débitos Estaduais</option>
-              <option value="Certidão Negativa de Débitos Municipais">Certidão Negativa de Débitos Municipais</option>
-              <option value="Certidão Simplificada da Junta Comercial">Certidão Simplificada da Junta Comercial</option>
-              <option value="Certidão Específica da Junta Comercial">Certidão Específica da Junta Comercial</option>
-              <option value="Outra Certidão">Outra Certidão</option>
             </select>
           </div>
           <div class="form-group">
@@ -191,7 +186,7 @@
               <button type="button" class="btn btn--secondary" id="btn-pick-file">Selecionar</button>
             </div>
             <p id="file-hint" class="form-hint" style="display: none;">
-              Selecione um arquivo apenas se quiser substituir o atual. Deixe em branco para mantê-lo.
+              Selecione um arquivo apenas se quiser substituir o atual.
             </p>
           </div>
           <div class="form-error" id="form-error" role="alert"></div>
@@ -257,6 +252,30 @@
       <div class="modal-footer">
         <button class="btn btn--secondary" id="btn-delete-cancel">Cancelar</button>
         <button class="btn btn--danger" id="btn-delete-confirm">Excluir</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══════════════════════ MODAL: TIPOS DE DOCUMENTO ══════════════════════ -->
+  <div class="modal-backdrop" id="tipos-backdrop" role="dialog" aria-modal="true" aria-labelledby="modal-tipos-title">
+    <div class="modal">
+      <div class="modal-header">
+        <h2 class="modal-title" id="modal-tipos-title">Tipos de Documento</h2>
+        <button class="modal-close" id="tipos-modal-close" aria-label="Fechar">&times;</button>
+      </div>
+      <div class="modal-body">
+        <div class="tipos-add-row">
+          <input
+            type="text" id="tipos-novo-input" class="form-control"
+            placeholder="Nome do novo tipo..." maxlength="200" autocomplete="off"
+          >
+          <button type="button" class="btn btn--success" id="tipos-add-btn">Adicionar</button>
+        </div>
+        <div class="form-error" id="tipos-form-error" role="alert"></div>
+        <ul class="tipos-list" id="tipos-list"></ul>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn--secondary" id="tipos-modal-fechar">Fechar</button>
       </div>
     </div>
   </div>

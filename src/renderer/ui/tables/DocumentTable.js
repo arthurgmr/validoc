@@ -72,7 +72,6 @@ class DocumentTable {
         <tr class="row--${status.type}">
           <td class="col-nome"><span title="${escapeHtml(doc.nome)}">${escapeHtml(doc.nome)}</span></td>
           <td class="col-id">${empresaCell}</td>
-          <td><span class="type-badge">${escapeHtml(doc.tipo)}</span></td>
           <td>${formatDate(doc.data_validade)}</td>
           <td><span class="status-badge status-badge--${status.type}">${status.label}</span></td>
           <td>

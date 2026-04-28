@@ -4,6 +4,7 @@ class Navigation {
   #navDocumentos;
   #navEmpresas;
   #btnAdd;
+  #docsMenuWrapper;
   #screenDocumentos;
   #screenEmpresas;
   #onSwitchCallbacks = new Map();
@@ -12,6 +13,7 @@ class Navigation {
     this.#navDocumentos    = document.getElementById('nav-documentos');
     this.#navEmpresas      = document.getElementById('nav-empresas');
     this.#btnAdd           = document.getElementById('btn-add');
+    this.#docsMenuWrapper  = document.getElementById('docs-menu-wrapper');
     this.#screenDocumentos = document.getElementById('screen-documentos');
     this.#screenEmpresas   = document.getElementById('screen-empresas');
   }
@@ -36,7 +38,10 @@ class Navigation {
     this.#screenEmpresas.style.display   = isDocumentos ? 'none' : '';
     this.#navDocumentos.classList.toggle('btn--nav-active', isDocumentos);
     this.#navEmpresas.classList.toggle('btn--nav-active', !isDocumentos);
-    this.#btnAdd.textContent = isDocumentos ? '+ Novo Documento' : '+ Nova Empresa';
+
+    // Header action: menu sanduíche para documentos, btn normal para empresas
+    this.#docsMenuWrapper.style.display = isDocumentos ? '' : 'none';
+    this.#btnAdd.style.display          = isDocumentos ? 'none' : '';
   }
 }
 
