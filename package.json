@@ -1,6 +1,6 @@
 {
   "name": "validoc",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Gestão local de validade de documentos",
   "main": "main.js",
   "scripts": {
